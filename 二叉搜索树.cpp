@@ -6,7 +6,7 @@ typedef struct a {
 	struct a* rchild;
 	
 }Tree;
-//´´½¨Ò»¸ö½Úµã
+//åˆ›å»ºä¸€ä¸ªèŠ‚ç‚¹
 Tree* creatNode(Tree* root, int data) {
 	root = (Tree*)malloc(sizeof(Tree));
 	if (root == NULL) return NULL;
@@ -14,9 +14,9 @@ Tree* creatNode(Tree* root, int data) {
 	root->rchild = root->lchild = NULL;
 	return root;
 }
-//Ç°Ğò±éÀú¹¹½¨¶ş²æÅÅĞòÊ÷
+//å‰åºéå†æ„å»ºäºŒå‰æ’åºæ ‘
 Tree* searchTree(Tree* root, int data) {
-	//´¦ÀíµÚÒ»¸ö¿Õ½Úµã
+	//å¤„ç†ç¬¬ä¸€ä¸ªç©ºèŠ‚ç‚¹
 	if (root == NULL) {
 		return creatNode(root, data);
 	}
@@ -29,16 +29,38 @@ Tree* searchTree(Tree* root, int data) {
 	return root;
 	
 }
-//ÖĞĞò±éÀú¿´ÊÇ·ñ³É¹¦½¨Á¢
+//ä¸­åºéå†çœ‹æ˜¯å¦æˆåŠŸå»ºç«‹
 void Traverse(Tree* root) {
 	if (root == NULL) return;
 	Traverse(root->lchild);
 	printf("%d ", root->data);
 	Traverse(root->rchild);
 }
-//²éÕÒ
+//å‰åºéå†æ„å»ºäºŒå‰æ’åºæ ‘
+Tree* searchTree(Tree* root, int data) {
+	//å¤„ç†ç¬¬ä¸€ä¸ªç©ºèŠ‚ç‚¹
+	if (root == NULL) {
+		return creatNode(root, data);
+	}
+	if (data < root->data) {
+		root->lchild=searchTree(root->lchild, data);
+	}
+	if (root->data < data) {
+		root->rchild=searchTree(root->rchild, data);
+	}
+	return root;
+	
+}
+//ä¸­åºéå†çœ‹æ˜¯å¦æˆåŠŸå»ºç«‹
+void Traverse(Tree* root) {
+	if (root == NULL) return;
+	Traverse(root->lchild);
+	printf("%d ", root->data);
+	Traverse(root->rchild);
+}
+//æŸ¥æ‰¾
 Tree* find(Tree* root, int data,Tree*p) {
-	//ÅĞ¶ÏÖÕÖ¹Ìõ¼ş
+	//åˆ¤æ–­ç»ˆæ­¢æ¡ä»¶
 	if (root == NULL) return NULL;
 	if (root->data == data) return root;
 	if (root->data > data) {
@@ -50,37 +72,59 @@ Tree* find(Tree* root, int data,Tree*p) {
 		return find(root->rchild, data,p);
 	}
 }
-//É¾³ı
-Tree* help(Tree* root) {
-	if (root == NULL) return NULL;
-	if (root->lchild == NULL) return root;
-	return help(root->lchild);
-	
+//åˆ é™¤
+Tree* help(Tree* root,Tree**FF) {//ä¼ è¿‡æ¥æ‰¾åˆ°èŠ‚ç‚¹çš„å³å­æ ‘,åœ¨å³å­æ ‘é‡Œé¢æ‰¾åˆ°æœ€å°å€¼
+	if (root == NULL) {
+		FF = NULL; return NULL;
+	}
+	if (root->lchild == NULL ) {
+		return root;
+	}
+	*FF = root;
+	return help(root->lchild, FF);
 }
 Tree* deletTree(Tree* root, int  data) {
-	Tree* F;
-	Tree* l = find(root, data, F);
+	Tree* F=NULL;
+	Tree* l = find(root, data, &F);//lä¸ºè¿”å›çš„ç›®æ ‡èŠ‚ç‚¹
 	if (l == NULL) return NULL;
-	//ÕÒµ½½ÚµãµÄÈıÖÖÇé¿ö
-	//Ò¶×Ó½Úµã
-	if (l->lchild == NULL &&l->rchild == NULL) {
+	//æ‰¾åˆ°èŠ‚ç‚¹çš„ä¸‰ç§æƒ…å†µ
+	//å¶å­èŠ‚ç‚¹
+	/*if (l->lchild == NULL &&l->rchild == NULL) {
 		if (F->lchild == l) {
 			 F->lchild = NULL; return root;
 		}
 		else{ F->rchild = NULL; return root; }
-	}
-	//ÓĞÒ»¸ö½ÚµãÊÇ¿Õ
+	}*/
+	//æœ‰ä¸€ä¸ªèŠ‚ç‚¹æ˜¯ç©º
 	if (l->lchild == NULL || l->rchild == NULL) {
 		if (F->lchild == l) {
-			F->lchild = (l->lchild == NULL? l->lchild : l->rchild );
+			F->lchild = (l->lchild == NULL ? l->rchild : l->lchild);
+			return root;
+		}
+		else {
+			F->rchild = (l->lchild == NULL ? l->rchild : l->lchild);
 			return root;
 		}
 	}
-	//Ã»ÓĞ¿Õ½Úµã
-	Tree* H = help(l);
-	if(H->)
+	//æ²¡æœ‰ç©ºèŠ‚ç‚¹
+	Tree* FF;
+	Tree* H = help(l->rchild, &FF);
+	if (H == NULL && FF == NULL) {
+		if (F->lchild == l) {
+			F->lchild = NULL; return root;
+		}
+		else {
+			F->rchild = NULL; return root;
+		}
+		return root;
+	}
+		if (F->lchild == l) F->lchild = H;
+		else F->rchild = H;
+		FF->lchild = H->rchild;
+		H->lchild = l->lchild;
+		H->rchild = l->rchild;
+		return root;
 }
-
 
 int main() {
 	int arr[] = { 24,3,5,4,65,7,6,8,678,4,5 };
