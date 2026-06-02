@@ -73,58 +73,49 @@ Tree* find(Tree* root, int data,Tree*p) {
 	}
 }
 //删除
-Tree* help(Tree* root,Tree**FF) {//传过来找到节点的右子树,在右子树里面找到最小值
+int delet(Tree** root,int data) {//传过来找到节点的右子树,在右子树里面找到最小值
+	//判断该删节点的情况两空与一空合为一种情况
+	//设置临时变量记录值一会释放
+	Tree* temp = *root;
+	if ((*root)->lchild == NULL) {
+		*root = (*root)->rchild;
+		free(temp);
+		return 1;
+	}
+	else if ((*root)->rchild == NULL) {
+		*root=(*root)->lchild;
+		free(temp);
+		return 1;
+	}
+	else {
+		Tree* recod = (*root)->rchild;
+		while (  recod->lchild!=NULL) {
+			temp = recod;
+			recod = recod->lchild;
+		}
+		(*root)->data = recod->data;
+		if (temp == *root) {
+			temp->rchild = recod->rchild;
+		}
+		free()
+	}
+}
+int  deletTree(Tree* root, int  data) {
 	if (root == NULL) {
-		FF = NULL; return NULL;
+		printf("这是一颗空树");
 	}
-	if (root->lchild == NULL ) {
-		return root;
+	if ((root)->data == data) {
+		return  delet(&root, data);
 	}
-	*FF = root;
-	return help(root->lchild, FF);
+	else if ((root)->data > data) {
+		return deletTree(root->lchild,data);
+	}
+	else if(root->data<data) {
+		return deletTree(root->rchild, data);
+	}
+	return 0;
 }
-Tree* deletTree(Tree* root, int  data) {
-	Tree* F=NULL;
-	Tree* l = find(root, data, &F);//l为返回的目标节点
-	if (l == NULL) return NULL;
-	//找到节点的三种情况
-	//叶子节点
-	/*if (l->lchild == NULL &&l->rchild == NULL) {
-		if (F->lchild == l) {
-			 F->lchild = NULL; return root;
-		}
-		else{ F->rchild = NULL; return root; }
-	}*/
-	//有一个节点是空
-	if (l->lchild == NULL || l->rchild == NULL) {
-		if (F->lchild == l) {
-			F->lchild = (l->lchild == NULL ? l->rchild : l->lchild);
-			return root;
-		}
-		else {
-			F->rchild = (l->lchild == NULL ? l->rchild : l->lchild);
-			return root;
-		}
-	}
-	//没有空节点
-	Tree* FF;
-	Tree* H = help(l->rchild, &FF);
-	if (H == NULL && FF == NULL) {
-		if (F->lchild == l) {
-			F->lchild = NULL; return root;
-		}
-		else {
-			F->rchild = NULL; return root;
-		}
-		return root;
-	}
-		if (F->lchild == l) F->lchild = H;
-		else F->rchild = H;
-		FF->lchild = H->rchild;
-		H->lchild = l->lchild;
-		H->rchild = l->rchild;
-		return root;
-}
+
 
 int main() {
 	int arr[] = { 24,3,5,4,65,7,6,8,678,4,5 };
